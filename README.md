@@ -14,4 +14,4 @@ Remember you cant use use setState function and then use that changed state insi
 Think about it, if you do something like useState(), and then you try to use that state inside useeffect, undefined is the value you will have access to because that is the initial state. It doesn't matter if you change it with setstate, because set state will only exist outisde of useeffect in the second render. To fix this, you can add that state as part of the dependency array (the second argument of useeffect), that way, useeffect will run again with the new state. 
 
 If you get error from the backend related to cors, perhaps you forgot to stringify the javascript object before sending it.
-.
+. 
