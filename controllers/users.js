@@ -99,7 +99,7 @@ const editUser = async (req, res, next) => {
     if (!req.accountId) throw authError;
     if (req.accountId != req.params.id) throw forbidden;
     const major = await MajorModel.findOne({ name: req.body.major });
-    if (!major) throw ApiError400("Not a valid major.");
+    if (!major) throw new ApiError400("Not a valid major.");
 
     const edits = {
       firstName: req.body.firstName,
@@ -496,9 +496,11 @@ const handleGoogleLogin = async (req, res, next) => {
     const userData = response.data;
 
     const user = await UserModel.findOne({ email: userData.email });
-    const userMajor = await MajorModel.findById(user.major);
 
     if (user) {
+      const userMajor = user.major
+        ? await MajorModel.findById(user.major)
+        : null;
       if (user.currStatus == "inactive") {
         throw new ApiError404("Account not found.");
       }
@@ -526,7 +528,16 @@ const handleGoogleLogin = async (req, res, next) => {
         if (err) {
           next(new ApiError400(err.message));
         } else {
-          res.status(200).send(doc);
+          const token = jwt.sign(
+            { email: doc.email, id: doc._id },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: "3h" }
+          );
+          res.status(200).send({
+            token: token,
+            userId: doc._id,
+            major: null,
+          });
         }
       });
     }

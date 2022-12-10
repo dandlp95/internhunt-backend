@@ -1,6 +1,5 @@
 const ApiError404 = require("../middleware/error-handling/apiError404");
 const ApiError400 = require("../middleware/error-handling/apiError400");
-const ApiError422 = require("../middleware/error-handling/apiError422");
 const ApiError401 = require("../middleware/error-handling/apiError401");
 
 const apiAuthError = new ApiError401();
@@ -11,7 +10,7 @@ const getAll = (Schema) => {
       if (err) {
         next(new ApiError400(err.message));
       } else if (!docs) {
-        next(new ApiError404("No documents found"));
+        next(new ApiError404("No data found"));
       } else {
         res.status(200).send(docs);
       }
@@ -26,7 +25,7 @@ const getById = (Schema) => {
         const apiError = new ApiError400(err.message);
         next(apiError);
       } else if (!doc) {
-        next(new ApiError404("no document found"));
+        next(new ApiError404("No data found"));
       } else {
         res.status(200).send(doc);
       }

@@ -26,7 +26,6 @@ const UserSchema = new Schema({
   verificationCode: {
     type: Number,
     default: null,
-    unique: true,
   },
   suspension: {
     isSuspended: {
