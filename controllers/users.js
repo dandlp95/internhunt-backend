@@ -107,15 +107,25 @@ const editUser = async (req, res, next) => {
       major: mongoose.Types.ObjectId(major._id),
     };
 
-    UserModel.findByIdAndUpdate(req.params.id, edits, (err, doc) => {
-      if (err) {
-        next(new ApiError400(err.message));
-      } else if (!doc) {
-        next(new ApiError404("No doc found"));
-      } else {
-        res.status(200).send({ message: "success" });
+    UserModel.findByIdAndUpdate(
+      req.params.id,
+      edits,
+      { new: true },
+      (err, doc) => {
+        if (err) {
+          next(new ApiError400(err.message));
+        } else if (!doc) {
+          next(new ApiError404("No doc found"));
+        } else {
+          const newUserInfo = {
+            firstName: doc.firstName,
+            lastName: doc.lastName,
+            major: major.name,
+          };
+          res.status(200).send(newUserInfo);
+        }
       }
-    });
+    );
   } catch (err) {
     next(err);
   }
