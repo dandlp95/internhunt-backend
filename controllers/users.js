@@ -425,7 +425,7 @@ const login = (req, res, next) => {
 
   UserModel.findOne({ email: email })
     .then((account) => {
-      if (account.currStatus == "inactive") {
+      if (!account || !account.active) {
         throw new ApiError404("Account not found.");
       }
       accountInfo = account;
@@ -501,7 +501,7 @@ const handleGoogleLogin = async (req, res, next) => {
       const userMajor = user.major
         ? await MajorModel.findById(user.major)
         : null;
-      if (user.currStatus == "inactive") {
+      if (!user.active) {
         throw new ApiError404("Account not found.");
       }
       const token = jwt.sign(
